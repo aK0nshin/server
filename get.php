@@ -312,3 +312,15 @@ $app->get(
         $responder($result, ["Content-Type"=>"application/json"]);
     }
 );
+
+$app->get(
+    '/api/v1/search/bysurname',
+    function ($limit, $offset) use ($app, $responder){
+        $name = $app->request->get('q');
+        $dataModel = Contribution::find(array("limit" => $limit, "offset" => $offset, "conditions" => "moderation = '3' and persons LIKE '%".$name."%'"))->toArray();
+        $count = Contribution::find(array("conditions" => "moderation = '3' and persons LIKE '%".$name."%'"))->toArray();
+        $countModel =count($count);
+        $result=["data"=>$dataModel, "meta"=>$countModel];
+        $responder($result, ["Content-Type"=>"application/json"]);
+    }
+);
